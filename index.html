@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Manami | eCommerce & Digital Marketing Specialist</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0e0e0e;
+      --surface: #161616;
+      --border: #2a2a2a;
+      --accent: #c8a97e;
+      --accent2: #e8d5b0;
+      --text: #f0ece4;
+      --muted: #888;
+      --serif: 'Cormorant Garamond', Georgia, serif;
+      --sans: 'DM Sans', sans-serif;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--sans);
+      font-weight: 300;
+      line-height: 1.7;
+      overflow-x: hidden;
+    }
+
+    /* NAV */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.5rem 3rem;
+      background: rgba(14,14,14,0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav-logo {
+      font-family: var(--serif);
+      font-size: 1.3rem;
+      letter-spacing: 0.12em;
+      color: var(--accent);
+      font-weight: 300;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 2.5rem;
+      list-style: none;
+    }
+
+    .nav-links a {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.8rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      transition: color 0.3s;
+    }
+
+    .nav-links a:hover { color: var(--accent); }
+
+    /* HERO */
+    .hero {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      align-items: center;
+      padding: 0 3rem;
+      gap: 4rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -30%;
+      right: -10%;
+      width: 60vw;
+      height: 60vw;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(200,169,126,0.06) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .hero-tag {
+      font-size: 0.7rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+    }
+
+    .hero-tag::before {
+      content: '';
+      display: block;
+      width: 2.5rem;
+      height: 1px;
+      background: var(--accent);
+    }
+
+    .hero-title {
+      font-family: var(--serif);
+      font-size: clamp(3rem, 5vw, 5rem);
+      font-weight: 300;
+      line-height: 1.1;
+      margin-bottom: 1.5rem;
+    }
+
+    .hero-title em {
+      font-style: italic;
+      color: var(--accent);
+    }
+
+    .hero-desc {
+      font-size: 1rem;
+      color: #aaa;
+      max-width: 440px;
+      margin-bottom: 2.5rem;
+      line-height: 1.8;
+    }
+
+    .hero-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.8rem;
+      padding: 0.9rem 2.2rem;
+      border: 1px solid var(--accent);
+      color: var(--accent);
+      text-decoration: none;
+      font-size: 0.8rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      transition: all 0.3s;
+    }
+
+    .hero-cta:hover {
+      background: var(--accent);
+      color: var(--bg);
+    }
+
+    .hero-right {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .stat-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 1.8rem 2rem;
+      position: relative;
+      overflow: hidden;
+      animation: fadeUp 0.8s ease both;
+    }
+
+    .stat-card:nth-child(1) { animation-delay: 0.1s; }
+    .stat-card:nth-child(2) { animation-delay: 0.2s; margin-left: 2rem; }
+    .stat-card:nth-child(3) { animation-delay: 0.3s; }
+
+    .stat-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      width: 3px;
+      height: 100%;
+      background: var(--accent);
+    }
+
+    .stat-number {
+      font-family: var(--serif);
+      font-size: 2.5rem;
+      font-weight: 300;
+      color: var(--accent);
+      line-height: 1;
+      margin-bottom: 0.3rem;
+    }
+
+    .stat-label {
+      font-size: 0.8rem;
+      color: var(--muted);
+      letter-spacing: 0.1em;
+    }
+
+    /* SECTIONS */
+    section {
+      padding: 6rem 3rem;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .section-label {
+      font-size: 0.7rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+    }
+
+    .section-label::before {
+      content: '';
+      display: block;
+      width: 2rem;
+      height: 1px;
+      background: var(--accent);
+    }
+
+    .section-title {
+      font-family: var(--serif);
+      font-size: clamp(2rem, 3vw, 3rem);
+      font-weight: 300;
+      margin-bottom: 3rem;
+      line-height: 1.2;
+    }
+
+    /* SKILLS GRID */
+    .skills-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1.5rem;
+    }
+
+    .skill-block {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 2rem;
+      transition: border-color 0.3s;
+    }
+
+    .skill-block:hover { border-color: var(--accent); }
+
+    .skill-block h3 {
+      font-family: var(--serif);
+      font-size: 1.3rem;
+      font-weight: 400;
+      color: var(--accent2);
+      margin-bottom: 1rem;
+    }
+
+    .skill-block ul {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .skill-block ul li {
+      font-size: 0.85rem;
+      color: #aaa;
+      padding-left: 1rem;
+      position: relative;
+    }
+
+    .skill-block ul li::before {
+      content: '—';
+      position: absolute;
+      left: 0;
+      color: var(--accent);
+      font-size: 0.7rem;
+    }
+
+    /* ACHIEVEMENTS */
+    .achievements {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2rem;
+    }
+
+    .achievement {
+      border-top: 1px solid var(--border);
+      padding-top: 1.5rem;
+    }
+
+    .achievement-num {
+      font-family: var(--serif);
+      font-size: 2.8rem;
+      font-weight: 300;
+      color: var(--accent);
+      line-height: 1;
+      margin-bottom: 0.5rem;
+    }
+
+    .achievement-desc {
+      font-size: 0.85rem;
+      color: #aaa;
+      line-height: 1.6;
+    }
+
+    /* CASE STUDIES */
+    .cases {
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
+
+    .case {
+      display: grid;
+      grid-template-columns: 1fr 2fr;
+      gap: 3rem;
+      padding: 2.5rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      transition: border-color 0.3s;
+    }
+
+    .case:hover { border-color: var(--accent); }
+
+    .case-meta {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .case-tag {
+      font-size: 0.65rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--accent);
+    }
+
+    .case-title {
+      font-family: var(--serif);
+      font-size: 1.5rem;
+      font-weight: 400;
+      color: var(--text);
+    }
+
+    .case-result {
+      font-family: var(--serif);
+      font-size: 2rem;
+      color: var(--accent);
+      margin-top: auto;
+    }
+
+    .case-body p {
+      font-size: 0.9rem;
+      color: #aaa;
+      margin-bottom: 1rem;
+      line-height: 1.8;
+    }
+
+    .case-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-top: 1rem;
+    }
+
+    .tag {
+      font-size: 0.7rem;
+      letter-spacing: 0.1em;
+      padding: 0.3rem 0.8rem;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      text-transform: uppercase;
+    }
+
+    /* CONTACT */
+    .contact-section {
+      text-align: center;
+      padding: 6rem 3rem;
+      border-top: 1px solid var(--border);
+      max-width: 100%;
+      background: var(--surface);
+    }
+
+    .contact-section .section-label {
+      justify-content: center;
+    }
+
+    .contact-section .section-label::before { display: none; }
+
+    .contact-section .section-title {
+      max-width: 600px;
+      margin: 0 auto 1.5rem;
+    }
+
+    .contact-section p {
+      color: var(--muted);
+      font-size: 0.9rem;
+      margin-bottom: 2.5rem;
+    }
+
+    .contact-links {
+      display: flex;
+      justify-content: center;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+    }
+
+    .contact-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      padding: 0.9rem 2rem;
+      border: 1px solid var(--border);
+      color: var(--text);
+      text-decoration: none;
+      font-size: 0.8rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      transition: all 0.3s;
+    }
+
+    .contact-link:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    .contact-link.primary {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: var(--bg);
+    }
+
+    .contact-link.primary:hover {
+      background: transparent;
+      color: var(--accent);
+    }
+
+    /* AVAILABILITY */
+    .avail-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.75rem;
+      color: #6fcf97;
+      margin-top: 1rem;
+      letter-spacing: 0.1em;
+    }
+
+    .avail-dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: #6fcf97;
+      animation: pulse 2s infinite;
+    }
+
+    /* ANIMATIONS */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(1.3); }
+    }
+
+    /* FOOTER */
+    footer {
+      text-align: center;
+      padding: 2rem;
+      font-size: 0.75rem;
+      color: var(--muted);
+      letter-spacing: 0.1em;
+      border-top: 1px solid var(--border);
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 768px) {
+      nav { padding: 1.2rem 1.5rem; }
+      .nav-links { display: none; }
+      .hero { grid-template-columns: 1fr; padding: 6rem 1.5rem 3rem; min-height: auto; gap: 3rem; }
+      .hero-right { display: none; }
+      section { padding: 4rem 1.5rem; }
+      .skills-grid { grid-template-columns: 1fr; }
+      .achievements { grid-template-columns: 1fr 1fr; }
+      .case { grid-template-columns: 1fr; gap: 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <div class="nav-logo">Manami</div>
+    <ul class="nav-links">
+      <li><a href="#skills">Skills</a></li>
+      <li><a href="#results">Results</a></li>
+      <li><a href="#work">Work</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </nav>
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-left">
+      <div class="hero-tag">Japan-Based Specialist</div>
+      <h1 class="hero-title">
+        eCommerce &<br>
+        <em>Digital Marketing</em><br>
+        Specialist
+      </h1>
+      <p class="hero-desc">
+        5+ years managing multi-channel online stores and digital operations for retail, hospitality, and F&B brands across Japan.
+      </p>
+      <a href="#contact" class="hero-cta">View on Upwork →</a>
+      <div class="avail-badge">
+        <div class="avail-dot"></div>
+        Available from 7PM JST · Response within 24hrs
+      </div>
+    </div>
+    <div class="hero-right">
+      <div class="stat-card">
+        <div class="stat-number">40%</div>
+        <div class="stat-label">Sales growth — dance fashion brand</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">¥600K</div>
+        <div class="stat-label">Monthly revenue — built from zero</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">100+</div>
+        <div class="stat-label">New products sourced per month</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SKILLS -->
+  <section id="skills">
+    <div class="section-label">Expertise</div>
+    <h2 class="section-title">What I bring<br>to your business</h2>
+    <div class="skills-grid">
+      <div class="skill-block">
+        <h3>eCommerce Operations</h3>
+        <ul>
+          <li>Multi-channel store management (Rakuten, BASE, Mercari)</li>
+          <li>Centralized inventory management via Next Engine</li>
+          <li>Product listing & photography</li>
+          <li>Order processing & fulfillment</li>
+          <li>Customer support management</li>
+          <li>Sales analytics & reporting</li>
+        </ul>
+      </div>
+      <div class="skill-block">
+        <h3>Digital Marketing</h3>
+        <ul>
+          <li>Instagram content strategy & Reels scripting</li>
+          <li>Multi-account social media management</li>
+          <li>Cross-posting to Instagram, X & Threads</li>
+          <li>WordPress website management</li>
+          <li>SEO & AEO structured data implementation</li>
+          <li>Rakuten advertising & campaign management</li>
+        </ul>
+      </div>
+      <div class="skill-block">
+        <h3>Automation & Tech</h3>
+        <ul>
+          <li>LINE chatbot development (Messaging API + AI)</li>
+          <li>Google Apps Script automation</li>
+          <li>Schema.org structured data (LodgingBusiness, FAQ)</li>
+          <li>WordPress Classic Editor HTML/CSS</li>
+          <li>LINE Rich Menu management</li>
+        </ul>
+      </div>
+      <div class="skill-block">
+        <h3>Industry Experience</h3>
+        <ul>
+          <li>Fashion & apparel (dance/activewear)</li>
+          <li>Food & beverage / sweets</li>
+          <li>Hospitality (hotel group operations)</li>
+          <li>General merchandise & lifestyle</li>
+          <li>Japanese market consumer behavior</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ACHIEVEMENTS -->
+  <section id="results" style="background: var(--surface); max-width:100%; padding: 5rem 3rem;">
+    <div style="max-width:1100px; margin:0 auto;">
+      <div class="section-label">By the numbers</div>
+      <h2 class="section-title">Results that speak</h2>
+      <div class="achievements">
+        <div class="achievement">
+          <div class="achievement-num">40%</div>
+          <div class="achievement-desc">Revenue increase for dance fashion brand through strategic product curation and listing optimization</div>
+        </div>
+        <div class="achievement">
+          <div class="achievement-num">¥600K</div>
+          <div class="achievement-desc">Peak monthly revenue scaled from zero for a food (sweets) brand within a single year</div>
+        </div>
+        <div class="achievement">
+          <div class="achievement-num">100+</div>
+          <div class="achievement-desc">New products sourced and curated monthly as lead buyer across fashion and lifestyle categories</div>
+        </div>
+        <div class="achievement">
+          <div class="achievement-num">50/mo</div>
+          <div class="achievement-desc">Product listings managed monthly across multiple eCommerce platforms simultaneously</div>
+        </div>
+        <div class="achievement">
+          <div class="achievement-num">5+</div>
+          <div class="achievement-desc">Years of hands-on eCommerce and digital marketing experience across diverse industries</div>
+        </div>
+        <div class="achievement">
+          <div class="achievement-num">9</div>
+          <div class="achievement-desc">Hotel properties managed for digital operations, social media, and chatbot systems</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CASE STUDIES -->
+  <section id="work">
+    <div class="section-label">Case Studies</div>
+    <h2 class="section-title">Selected work</h2>
+    <div class="cases">
+
+      <div class="case">
+        <div class="case-meta">
+          <div class="case-tag">eCommerce · Fashion</div>
+          <div class="case-title">Dance Apparel Brand</div>
+          <div class="case-result">+40% Sales</div>
+        </div>
+        <div class="case-body">
+          <p>Took on the role of lead buyer and eCommerce manager for a dance and activewear fashion brand. Responsible for identifying and sourcing over 100 new products per month, managing listings across multiple platforms, and optimizing product presentation.</p>
+          <p>Implemented a structured product selection framework focusing on trend alignment and margin optimization, resulting in a 40% increase in overall sales revenue.</p>
+          <div class="case-tags">
+            <span class="tag">Product Sourcing</span>
+            <span class="tag">Listing Optimization</span>
+            <span class="tag">Inventory Management</span>
+            <span class="tag">Fashion</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="case">
+        <div class="case-meta">
+          <div class="case-tag">eCommerce · Food & Beverage</div>
+          <div class="case-title">Sweets Brand</div>
+          <div class="case-result">¥0 → ¥600K/mo</div>
+        </div>
+        <div class="case-body">
+          <p>Built and scaled an online sweets brand from the ground up with zero initial revenue. Managed everything from store setup, product photography, and description writing to advertising campaigns and customer service.</p>
+          <p>Grew the store to achieve peak monthly revenue of ¥600,000 through consistent listing quality, competitive pricing strategy, and customer retention initiatives.</p>
+          <div class="case-tags">
+            <span class="tag">Store Launch</span>
+            <span class="tag">Growth Strategy</span>
+            <span class="tag">Advertising</span>
+            <span class="tag">Food & Beverage</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="case">
+        <div class="case-meta">
+          <div class="case-tag">Digital Marketing · Hospitality</div>
+          <div class="case-title">Hotel Group</div>
+          <div class="case-result">9 Properties</div>
+        </div>
+        <div class="case-body">
+          <p>Manage full digital operations for a nine-property hotel group across Niigata Prefecture, Japan. Responsibilities span Instagram content creation and Reels production, LINE chatbot development using AI integration, WordPress website management, and AEO structured data implementation.</p>
+          <p>Developed an AI-powered concierge LINE bot using LINE Messaging API, Google Apps Script, and Groq API — reducing staff inquiry load while improving guest response times.</p>
+          <div class="case-tags">
+            <span class="tag">Instagram</span>
+            <span class="tag">LINE Bot</span>
+            <span class="tag">WordPress</span>
+            <span class="tag">Hospitality</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <div class="contact-section" id="contact">
+    <div class="section-label">Get in touch</div>
+    <h2 class="section-title" style="font-family: var(--serif); font-size: clamp(2rem,3vw,3rem); font-weight:300; margin-bottom:1.5rem;">Let's work together</h2>
+    <p>Available for freelance projects · 7PM JST daily · Response within 24 hours</p>
+    <div class="contact-links">
+      <a href="https://www.upwork.com/" target="_blank" class="contact-link primary">Hire me on Upwork</a>
+      <a href="mailto:your@email.com" class="contact-link">Send Email</a>
+    </div>
+  </div>
+
+  <footer>
+    © 2026 Manami · eCommerce & Digital Marketing Specialist · Japan
+  </footer>
+
+</body>
+</html>
