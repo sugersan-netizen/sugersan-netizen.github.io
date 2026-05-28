@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>見積書</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: #eef0f3;
+      font-family: 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', 'Meiryo', sans-serif;
+      font-size: 13px;
+      color: #1a1a2e;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 1rem;
+      gap: 0.7rem;
+    }
+
+    /* ── ツールバー ── */
+    .toolbar {
+      width: 100%;
+      max-width: 760px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .toolbar-title { font-size: 0.78rem; color: #999; letter-spacing: 0.06em; }
+    .btn-group { display: flex; gap: 0.5rem; }
+    .btn {
+      padding: 0.42rem 1rem;
+      border: none; border-radius: 4px;
+      font-family: inherit; font-size: 0.78rem; font-weight: 500;
+      cursor: pointer; transition: opacity 0.15s;
+    }
+    .btn:hover { opacity: 0.82; }
+    .btn-ghost { background: #fff; color: #555; border: 1px solid #d0d5dd; }
+    .btn-blue  { background: #3b7ef8; color: #fff; }
+
+    /* ── 見積書用紙 ── */
+    .paper {
+      width: 100%;
+      max-width: 760px;
+      background: #fff;
+      border: 1px solid #d0d5dd;
+      border-radius: 6px;
+      padding: 1.8rem 2.2rem 1.4rem;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.07);
+    }
+
+    /* 上段 */
+    .top-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 1.2rem;
+      gap: 1rem;
+    }
+    .doc-title {
+      font-size: 1.6rem;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      border-bottom: 3px solid #1a1a2e;
+      padding-bottom: 0.15rem;
+      line-height: 1;
+    }
+    .meta-grid {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 0.18rem 0.4rem;
+      align-items: center;
+      text-align: right;
+    }
+    .meta-grid label { font-size: 0.72rem; color: #aaa; white-space: nowrap; }
+    .fi {
+      border: none; border-bottom: 1px solid #e5e5e5;
+      background: transparent; font-family: inherit;
+      font-size: 0.78rem; color: #1a1a2e;
+      padding: 0.1rem 0.25rem; width: 128px; text-align: right;
+    }
+    .fi:focus { outline: none; border-bottom-color: #3b7ef8; }
+
+    /* 宛先 & 発行者 */
+    .parties {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.2rem;
+      margin-bottom: 1rem;
+    }
+    .party-label {
+      font-size: 0.62rem; letter-spacing: 0.14em;
+      text-transform: uppercase; color: #bbb; margin-bottom: 0.3rem;
+    }
+    .pi {
+      border: none; border-bottom: 1px solid #ebebeb;
+      background: transparent; font-family: inherit;
+      font-size: 0.83rem; color: #1a1a2e;
+      padding: 0.18rem 0.1rem; width: 100%; line-height: 1.5;
+    }
+    .pi:focus { outline: none; border-bottom-color: #3b7ef8; }
+    .pi.big { font-size: 0.98rem; font-weight: 600; }
+    .honorific { display: flex; align-items: baseline; gap: 0.2rem; }
+    .honorific span { font-size: 0.83rem; color: #888; white-space: nowrap; }
+
+    /* 件名 */
+    .subject-row {
+      display: flex; align-items: center; gap: 0.4rem;
+      margin-bottom: 1rem; font-size: 0.83rem; color: #999;
+    }
+    .si {
+      flex: 1; border: none; border-bottom: 1px solid #ebebeb;
+      background: transparent; font-family: inherit;
+      font-size: 0.88rem; color: #1a1a2e; padding: 0.18rem 0.25rem;
+    }
+    .si:focus { outline: none; border-bottom-color: #3b7ef8; }
+
+    /* 品目テーブル */
+    .tbl { width: 100%; border-collapse: collapse; font-size: 0.8rem; margin-bottom: 0.35rem; }
+    .tbl thead th {
+      background: #1a1a2e; color: #fff;
+      padding: 0.4rem 0.35rem;
+      font-weight: 500; font-size: 0.72rem; letter-spacing: 0.04em;
+      text-align: center;
+    }
+    .tbl thead th:first-child { text-align: left; border-radius: 3px 0 0 0; }
+    .tbl thead th:last-child  { border-radius: 0 3px 0 0; width: 26px; }
+    .tbl tbody tr:nth-child(even) { background: #f7f8fc; }
+    .tbl tbody tr:hover           { background: #eef3ff; }
+    .tbl td { padding: 0.18rem 0.28rem; border-bottom: 1px solid #f2f2f2; vertical-align: middle; }
+    .ti {
+      border: none; background: transparent;
+      font-family: inherit; font-size: 0.8rem; color: #1a1a2e;
+      width: 100%; padding: 0.12rem;
+    }
+    .ti:focus { outline: 1px solid #3b7ef8; border-radius: 2px; background: #fff; }
+    .ti.r { text-align: right; }
+    .amt-cell { text-align: right; font-variant-numeric: tabular-nums; padding-right: 0.4rem; white-space: nowrap; }
+    .del-btn {
+      background: none; border: none; cursor: pointer;
+      color: #d0d0d0; font-size: 0.8rem; padding: 0 2px; transition: color 0.15s;
+    }
+    .del-btn:hover { color: #e74c3c; }
+
+    .add-row-btn {
+      width: 100%; background: none;
+      border: 1px dashed #d0d5dd; border-radius: 3px;
+      padding: 0.3rem; font-family: inherit; font-size: 0.75rem; color: #bbb;
+      cursor: pointer; transition: all 0.15s; margin-bottom: 0.8rem;
+    }
+    .add-row-btn:hover { border-color: #3b7ef8; color: #3b7ef8; }
+
+    /* 備考 & 合計 */
+    .bottom-row {
+      display: flex; justify-content: flex-end;
+      gap: 1.5rem; align-items: flex-start;
+    }
+    .notes-block { flex: 1; }
+    .notes-label { font-size: 0.68rem; color: #bbb; margin-bottom: 0.2rem; letter-spacing: 0.08em; }
+    .notes-ta {
+      width: 100%; border: 1px solid #ebebeb; border-radius: 3px;
+      padding: 0.35rem 0.45rem; font-family: inherit;
+      font-size: 0.78rem; color: #1a1a2e; resize: vertical; min-height: 52px;
+    }
+    .notes-ta:focus { outline: none; border-color: #3b7ef8; }
+
+    .totals-tbl { border-collapse: collapse; font-size: 0.8rem; min-width: 210px; }
+    .totals-tbl td { padding: 0.27rem 0.45rem; border-bottom: 1px solid #f2f2f2; }
+    .totals-tbl td:last-child { text-align: right; font-variant-numeric: tabular-nums; }
+    .totals-tbl .tax-row td { color: #999; }
+    .tax-sel {
+      border: none; border-bottom: 1px solid #e0e0e0;
+      font-family: inherit; font-size: 0.75rem; color: #999;
+      background: transparent; cursor: pointer;
+    }
+    .totals-tbl .grand td {
+      font-weight: 700; font-size: 0.92rem;
+      border-top: 2px solid #1a1a2e; border-bottom: 2px solid #1a1a2e;
+      background: #f0f4ff;
+    }
+
+    .validity { text-align: center; font-size: 0.72rem; color: #bbb; margin-top: 0.9rem; }
+
+    /* ── 印刷：A4 1枚に収める ── */
+    @media print {
+      html, body { height: auto; background: #fff !important; }
+      body { padding: 0; display: block; }
+      .toolbar, .add-row-btn, .del-btn { display: none !important; }
+
+      .paper {
+        border: none; box-shadow: none; border-radius: 0;
+        padding: 0.9cm 1.2cm 0.7cm;
+        max-width: 100%;
+        font-size: 10.5px;
+      }
+
+      .top-row    { margin-bottom: 0.6rem; }
+      .doc-title  { font-size: 1.25rem; }
+      .parties    { margin-bottom: 0.55rem; gap: 0.8rem; }
+      .subject-row { margin-bottom: 0.55rem; }
+      .add-row-btn { display: none; }
+      .bottom-row { gap: 1rem; }
+      .notes-ta   { min-height: 36px; }
+      .validity   { margin-top: 0.5rem; }
+
+      .fi, .pi, .si, .ti, .notes-ta { border: none !important; padding-left: 0; padding-right: 0; }
+      .tax-sel { border: none !important; }
+
+      .tbl thead th { padding: 0.28rem 0.3rem; }
+      .tbl td       { padding: 0.12rem 0.22rem; }
+      .totals-tbl td { padding: 0.18rem 0.35rem; }
+
+      .tbl thead {
+        background: #1a1a2e !important;
+        -webkit-print-color-adjust: exact; print-color-adjust: exact;
+      }
+      .tbl tbody tr:nth-child(even) {
+        background: #f7f8fc !important;
+        -webkit-print-color-adjust: exact; print-color-adjust: exact;
+      }
+      .totals-tbl .grand td {
+        background: #f0f4ff !important;
+        -webkit-print-color-adjust: exact; print-color-adjust: exact;
+      }
+
+      @page { size: A4; margin: 0; }
+    }
+
+    /* ── スマホ ── */
+    @media (max-width: 580px) {
+      body { padding: 0.5rem; }
+      .paper { padding: 1.1rem 0.9rem; }
+      .parties { grid-template-columns: 1fr; gap: 0.9rem; }
+      .top-row { flex-direction: column; gap: 0.7rem; }
+      .bottom-row { flex-direction: column; gap: 0.8rem; }
+      .totals-tbl { width: 100%; }
+      .fi { width: 110px; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="toolbar">
+  <span class="toolbar-title">見積書作成ツール</span>
+  <div class="btn-group">
+    <button class="btn btn-ghost" onclick="clearAll()">クリア</button>
+    <button class="btn btn-blue"  onclick="window.print()">印刷 / PDF保存</button>
+  </div>
+</div>
+
+<div class="paper">
+
+  <div class="top-row">
+    <div class="doc-title">見 積 書</div>
+    <div class="meta-grid">
+      <label>見積番号</label><input class="fi" id="qNum"   type="text" value="Q-001" />
+      <label>発行日</label>  <input class="fi" id="qIssue" type="date" />
+      <label>有効期限</label><input class="fi" id="qExp"   type="date" />
+    </div>
+  </div>
+
+  <div class="parties">
+    <div>
+      <div class="party-label">お客様</div>
+      <div class="honorific">
+        <input class="pi big" id="qClient"  type="text" placeholder="株式会社○○" />
+        <span>御中</span>
+      </div>
+      <input class="pi" id="qDept"    type="text" placeholder="担当部署（任意）" />
+      <input class="pi" id="qContact" type="text" placeholder="担当者名（任意）" />
+    </div>
+    <div>
+      <div class="party-label">発行者</div>
+      <input class="pi big" id="qIssuerName"  type="text" placeholder="会社名 / 氏名" />
+      <input class="pi"     id="qIssuerAddr"  type="text" placeholder="住所" />
+      <input class="pi"     id="qIssuerTel"   type="text" placeholder="TEL" />
+      <input class="pi"     id="qIssuerEmail" type="text" placeholder="Email" />
+      <input class="pi"     id="qIssuerReg"   type="text" placeholder="登録番号（インボイス）" />
+    </div>
+  </div>
+
+  <div class="subject-row">
+    <span>件名：</span>
+    <input class="si" id="qSubject" type="text" placeholder="ご提案内容・件名" />
+  </div>
+
+  <table class="tbl">
+    <thead>
+      <tr>
+        <th style="width:40%">品名・内容</th>
+        <th style="width:10%">数量</th>
+        <th style="width:10%">単位</th>
+        <th style="width:17%">単価（円）</th>
+        <th style="width:16%">金額（円）</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody id="tbody"></tbody>
+  </table>
+  <button class="add-row-btn" onclick="addRow()">＋ 行を追加</button>
+
+  <div class="bottom-row">
+    <div class="notes-block">
+      <div class="notes-label">備考</div>
+      <textarea class="notes-ta" id="qNotes" placeholder="お支払条件・納期など"></textarea>
+    </div>
+    <table class="totals-tbl">
+      <tr><td>小計</td><td id="tSub">¥0</td></tr>
+      <tr class="tax-row">
+        <td>消費税 <select class="tax-sel" id="taxRate" onchange="recalc()">
+          <option value="0.10" selected>10%</option>
+          <option value="0.08">8%（軽減）</option>
+          <option value="0">非課税</option>
+        </select></td>
+        <td id="tTax">¥0</td>
+      </tr>
+      <tr class="grand"><td>合計（税込）</td><td id="tTotal">¥0</td></tr>
+    </table>
+  </div>
+
+  <div class="validity" id="validity"></div>
+</div>
+
+<script>
+  let rowId = 0;
+
+  (function init() {
+    const fmt = d => d.toISOString().slice(0, 10);
+    const t = new Date(), e = new Date(t);
+    e.setDate(e.getDate() + 30);
+    document.getElementById('qIssue').value = fmt(t);
+    document.getElementById('qExp').value   = fmt(e);
+    document.getElementById('qExp').addEventListener('change', updateValidity);
+    updateValidity();
+    for (let i = 0; i < 5; i++) addRow();
+  })();
+
+  function addRow() {
+    const id = rowId++;
+    const tr = document.createElement('tr');
+    tr.id = 'r' + id;
+    tr.innerHTML = `
+      <td><input class="ti"   type="text"   placeholder="品名・サービス内容"></td>
+      <td><input class="ti r qty"   type="number" min="0" step="any" value="1" oninput="recalc()"></td>
+      <td><input class="ti"   type="text"   placeholder="式"></td>
+      <td><input class="ti r price" type="number" min="0" step="any" placeholder="0" oninput="recalc()"></td>
+      <td class="amt-cell" id="a${id}">—</td>
+      <td><button class="del-btn" onclick="delRow(${id})">✕</button></td>`;
+    document.getElementById('tbody').appendChild(tr);
+    recalc();
+  }
+
+  function delRow(id) {
+    document.getElementById('r' + id)?.remove();
+    recalc();
+  }
+
+  function recalc() {
+    let sub = 0;
+    document.querySelectorAll('#tbody tr').forEach(tr => {
+      const q = parseFloat(tr.querySelector('.qty')?.value)   || 0;
+      const p = parseFloat(tr.querySelector('.price')?.value) || 0;
+      const a = q * p;
+      const cell = document.getElementById('a' + tr.id.slice(1));
+      if (cell) cell.textContent = a ? yen(a) : '—';
+      sub += a;
+    });
+    const rate = parseFloat(document.getElementById('taxRate').value);
+    const tax  = Math.floor(sub * rate);
+    document.getElementById('tSub').textContent   = yen(sub);
+    document.getElementById('tTax').textContent   = yen(tax);
+    document.getElementById('tTotal').textContent = yen(sub + tax);
+  }
+
+  function yen(n) { return '¥' + Math.round(n).toLocaleString('ja-JP'); }
+
+  function updateValidity() {
+    const v = document.getElementById('qExp').value;
+    document.getElementById('validity').textContent = v
+      ? `本見積書の有効期限は ${new Date(v).toLocaleDateString('ja-JP', {year:'numeric',month:'long',day:'numeric'})} までとなります。`
+      : '';
+  }
+
+  function clearAll() {
+    if (!confirm('入力内容をクリアしますか？')) return;
+    ['qClient','qDept','qContact','qIssuerName','qIssuerAddr',
+     'qIssuerTel','qIssuerEmail','qIssuerReg','qSubject','qNotes']
+      .forEach(id => document.getElementById(id).value = '');
+    document.getElementById('qNum').value = 'Q-001';
+    document.getElementById('taxRate').value = '0.10';
+    const fmt = d => d.toISOString().slice(0, 10);
+    const t = new Date(), e = new Date(t);
+    e.setDate(e.getDate() + 30);
+    document.getElementById('qIssue').value = fmt(t);
+    document.getElementById('qExp').value   = fmt(e);
+    document.getElementById('tbody').innerHTML = '';
+    rowId = 0;
+    for (let i = 0; i < 5; i++) addRow();
+    updateValidity();
+  }
+</script>
+</body>
+</html>
