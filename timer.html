@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Timer</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0e0e0e;
+      --surface: #161616;
+      --border: #2a2a2a;
+      --accent: #c8a97e;
+      --accent2: #e8d5b0;
+      --text: #f0ece4;
+      --muted: #888;
+      --serif: 'Cormorant Garamond', Georgia, serif;
+      --sans: 'DM Sans', sans-serif;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--sans);
+      font-weight: 300;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2rem;
+    }
+
+    h1 {
+      font-family: var(--serif);
+      font-weight: 300;
+      font-size: 1.4rem;
+      letter-spacing: 0.2em;
+      color: var(--muted);
+      text-transform: uppercase;
+    }
+
+    .timer-display {
+      font-family: var(--serif);
+      font-size: clamp(4rem, 15vw, 8rem);
+      font-weight: 300;
+      letter-spacing: 0.05em;
+      color: var(--accent2);
+      line-height: 1;
+      min-width: 5ch;
+      text-align: center;
+      transition: color 0.3s;
+    }
+
+    .timer-display.warning {
+      color: #e07070;
+    }
+
+    .progress-ring {
+      position: relative;
+      width: 280px;
+      height: 280px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .progress-ring svg {
+      position: absolute;
+      top: 0; left: 0;
+      transform: rotate(-90deg);
+    }
+
+    .progress-ring circle {
+      fill: none;
+      stroke-width: 2;
+    }
+
+    .ring-bg { stroke: var(--border); }
+    .ring-fg {
+      stroke: var(--accent);
+      stroke-linecap: round;
+      transition: stroke-dashoffset 1s linear, stroke 0.3s;
+    }
+    .ring-fg.warning { stroke: #e07070; }
+
+    .preset-buttons {
+      display: flex;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .preset-btn {
+      background: none;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      font-family: var(--sans);
+      font-size: 0.8rem;
+      letter-spacing: 0.1em;
+      padding: 0.4rem 1rem;
+      cursor: pointer;
+      transition: border-color 0.2s, color 0.2s;
+    }
+
+    .preset-btn:hover, .preset-btn.active {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    .custom-input-row {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .custom-input-row input {
+      width: 3.5rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-family: var(--sans);
+      font-size: 0.9rem;
+      text-align: center;
+      padding: 0.4rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .custom-input-row input:focus {
+      border-color: var(--accent);
+    }
+
+    .custom-input-row label {
+      color: var(--muted);
+      font-size: 0.8rem;
+      letter-spacing: 0.08em;
+    }
+
+    .controls {
+      display: flex;
+      gap: 1rem;
+    }
+
+    .btn {
+      background: none;
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-family: var(--sans);
+      font-size: 0.85rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 0.6rem 2rem;
+      cursor: pointer;
+      transition: border-color 0.2s, color 0.2s, background 0.2s;
+    }
+
+    .btn-primary {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    .btn-primary:hover {
+      background: var(--accent);
+      color: var(--bg);
+    }
+
+    .btn-secondary:hover {
+      border-color: var(--muted);
+      color: var(--muted);
+    }
+
+    .status {
+      font-size: 0.75rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--muted);
+      height: 1em;
+    }
+
+    .status.running { color: var(--accent); }
+    .status.done { color: #7ec87e; }
+  </style>
+</head>
+<body>
+
+  <h1>Timer</h1>
+
+  <div class="progress-ring">
+    <svg width="280" height="280" viewBox="0 0 280 280">
+      <circle class="ring-bg" cx="140" cy="140" r="130" />
+      <circle class="ring-fg" id="ringFg" cx="140" cy="140" r="130"
+        stroke-dasharray="816.81"
+        stroke-dashoffset="0" />
+    </svg>
+    <div class="timer-display" id="display">00:00</div>
+  </div>
+
+  <div class="preset-buttons">
+    <button class="preset-btn" data-minutes="1">1 min</button>
+    <button class="preset-btn" data-minutes="3">3 min</button>
+    <button class="preset-btn" data-minutes="5">5 min</button>
+    <button class="preset-btn" data-minutes="10">10 min</button>
+    <button class="preset-btn" data-minutes="25">25 min</button>
+  </div>
+
+  <div class="custom-input-row">
+    <input type="number" id="minInput" min="0" max="99" value="5" />
+    <label>min</label>
+    <input type="number" id="secInput" min="0" max="59" value="0" />
+    <label>sec</label>
+  </div>
+
+  <div class="controls">
+    <button class="btn btn-primary" id="startBtn">Start</button>
+    <button class="btn btn-secondary" id="resetBtn">Reset</button>
+  </div>
+
+  <div class="status" id="status"></div>
+
+  <script>
+    const CIRCUMFERENCE = 2 * Math.PI * 130;
+
+    let totalSeconds = 0;
+    let remaining = 0;
+    let intervalId = null;
+    let running = false;
+
+    const display = document.getElementById('display');
+    const ringFg = document.getElementById('ringFg');
+    const startBtn = document.getElementById('startBtn');
+    const resetBtn = document.getElementById('resetBtn');
+    const status = document.getElementById('status');
+    const minInput = document.getElementById('minInput');
+    const secInput = document.getElementById('secInput');
+
+    function formatTime(s) {
+      const m = Math.floor(s / 60);
+      const sec = s % 60;
+      return `${String(m).padStart(2, '0')}:${String(sec).padStart(2, '0')}`;
+    }
+
+    function updateRing(rem, total) {
+      const frac = total > 0 ? rem / total : 0;
+      ringFg.style.strokeDashoffset = CIRCUMFERENCE * (1 - frac);
+      const warn = rem <= 10 && rem > 0;
+      ringFg.classList.toggle('warning', warn);
+      display.classList.toggle('warning', warn);
+    }
+
+    function setDisplay(s) {
+      display.textContent = formatTime(s);
+      updateRing(s, totalSeconds);
+    }
+
+    function getInputSeconds() {
+      const m = Math.max(0, parseInt(minInput.value) || 0);
+      const s = Math.max(0, Math.min(59, parseInt(secInput.value) || 0));
+      return m * 60 + s;
+    }
+
+    function start() {
+      if (running) {
+        clearInterval(intervalId);
+        running = false;
+        startBtn.textContent = 'Resume';
+        status.textContent = 'Paused';
+        status.className = 'status';
+        return;
+      }
+
+      if (remaining === 0) {
+        totalSeconds = getInputSeconds();
+        remaining = totalSeconds;
+      }
+
+      if (remaining <= 0) return;
+
+      running = true;
+      startBtn.textContent = 'Pause';
+      status.textContent = 'Running';
+      status.className = 'status running';
+
+      intervalId = setInterval(() => {
+        remaining--;
+        setDisplay(remaining);
+        if (remaining <= 0) {
+          clearInterval(intervalId);
+          running = false;
+          startBtn.textContent = 'Start';
+          status.textContent = 'Done';
+          status.className = 'status done';
+          notify();
+        }
+      }, 1000);
+
+      setDisplay(remaining);
+    }
+
+    function reset() {
+      clearInterval(intervalId);
+      running = false;
+      remaining = 0;
+      totalSeconds = getInputSeconds();
+      setDisplay(totalSeconds);
+      startBtn.textContent = 'Start';
+      status.textContent = '';
+      status.className = 'status';
+    }
+
+    function notify() {
+      if ('Notification' in window && Notification.permission === 'granted') {
+        new Notification('Timer finished!');
+      }
+      // audible beep via Web Audio
+      try {
+        const ctx = new AudioContext();
+        [0, 0.3, 0.6].forEach(offset => {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.frequency.value = 880;
+          gain.gain.setValueAtTime(0.3, ctx.currentTime + offset);
+          gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + offset + 0.25);
+          osc.start(ctx.currentTime + offset);
+          osc.stop(ctx.currentTime + offset + 0.3);
+        });
+      } catch {}
+    }
+
+    startBtn.addEventListener('click', start);
+    resetBtn.addEventListener('click', reset);
+
+    document.querySelectorAll('.preset-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        const mins = parseInt(btn.dataset.minutes);
+        minInput.value = mins;
+        secInput.value = 0;
+        reset();
+      });
+    });
+
+    [minInput, secInput].forEach(inp => {
+      inp.addEventListener('change', reset);
+    });
+
+    if ('Notification' in window) Notification.requestPermission();
+
+    // init
+    reset();
+  </script>
+</body>
+</html>
